@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, Depends
+from sqlalchemy.orm import Session
 
+from app.core.database import get_session
 from app.schemas.upload import UploadResponse
 from app.services.upload_service import UploadService
 
 router = APIRouter(prefix="/upload", tags=["upload"])
-
 service = UploadService()
 
 
@@ -14,6 +15,7 @@ service = UploadService()
 async def upload(
     file: UploadFile = File(..., description="이미지/동영상 파일"),
     metadata: str = Form(..., description="JSON 문자열 메타데이터"),
+    db: Session = Depends(get_session),
 ):
     # 컨트롤러는 요청 파싱만 담당, 로직은 서비스로 위임
-    return service.process_upload(file, metadata)
+    return service.process_upload(db=db, file=file, metadata_str=metadata)

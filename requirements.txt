@@ -6,3 +6,5 @@ python-multipart==0.0.7
 opencv-python-headless==4.9.0.80
 Pillow==10.2.0
 numpy==1.26.3
+sqlalchemy==2.0.25
+alembic==1.13.1

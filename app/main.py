@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.settings import settings
-from app.controllers import health_controller, upload_controller
+from app.core import database
+from app.controllers import health_controller, upload_controller, files_controller, stats_controller, download_controller
 
 
 def create_app() -> FastAPI:
@@ -15,8 +16,14 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    # DB 테이블 생성 (개발용). 운영 시 Alembic 권장.
+    database.Base.metadata.create_all(bind=database.engine)
+
     app.include_router(health_controller.router)
     app.include_router(upload_controller.router, prefix=settings.api_prefix)
+    app.include_router(files_controller.router, prefix=settings.api_prefix)
+    app.include_router(stats_controller.router, prefix=settings.api_prefix)
+    app.include_router(download_controller.router, prefix=settings.api_prefix)
     return app
 
 

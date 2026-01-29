@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     processed_path: str = Field("./data/processed", alias="PROCESSED_PATH")
     meta_path: str = Field("./data/meta", alias="META_PATH")
 
+    # DB
+    database_url: str = Field("sqlite:///./data.db", alias="DATABASE_URL")
+
     # 업로드 허용 확장자/크기
     allowed_image_exts: List[str] = Field(default_factory=lambda: [".jpg", ".jpeg", ".png", ".bmp"])
     allowed_video_exts: List[str] = Field(default_factory=lambda: [".mp4", ".mov", ".avi", ".mkv"])

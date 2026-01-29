@@ -1,22 +1,23 @@
 from __future__ import annotations
 
 from typing import Literal, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 MediaType = Literal["image", "video"]
 
 
 class Metadata(BaseModel):
+    model_config = ConfigDict(extra="allow")
     # 업로드 필수 메타
     vehicle_id: str
     captured_at: str  # ISO8601 string
     source: str  # e.g., camera_front
     route_id: str
-    # 선택 메타를 자유롭게 허용
-    extras: Dict[str, Any] = Field(default_factory=dict)
-
-    class Config:
-        extra = "allow"
+    # 선택 필드
+    location_lat: float | None = None
+    location_lon: float | None = None
+    weather: str | None = None
+    note: str | None = None
 
 
 class UploadResponse(BaseModel):
