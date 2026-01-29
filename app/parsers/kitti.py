@@ -11,6 +11,7 @@ def parse_kitti_label_file(label_path: Path) -> List[BoundingBox]:
     KITTI label format (per line):
     type truncation occlusion alpha bbox_left bbox_top bbox_right bbox_bottom ... (rest omitted)
     We parse class + bbox only.
+    각 줄에서 클래스명과 2D 바운딩 박스 좌표만 추출한다.
     """
     boxes: List[BoundingBox] = []
     with label_path.open("r") as f:
@@ -27,5 +28,6 @@ def parse_kitti_label_file(label_path: Path) -> List[BoundingBox]:
 
 
 def iter_kitti_images(image_dir: Path, exts: Iterable[str] = (".png", ".jpg", ".jpeg")) -> Iterable[Path]:
+    # 지정 폴더에서 이미지 확장자 목록을 순회
     for ext in exts:
         yield from image_dir.glob(f"*{ext}")

@@ -19,6 +19,7 @@ class MinioClientWrapper:
         )
 
     def ensure_bucket(self, bucket: str) -> None:
+        # 버킷이 없으면 생성
         if not self.client.bucket_exists(bucket):
             self.client.make_bucket(bucket)
 

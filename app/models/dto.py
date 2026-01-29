@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 
 @dataclass
 class BoundingBox:
+    # 하나의 객체 라벨과 2D 바운딩 박스 좌표를 표현
     label: str
     x_min: float
     y_min: float
@@ -18,6 +19,7 @@ class BoundingBox:
 
 @dataclass
 class ImageRecord:
+    # 전처리된 이미지 한 장과 관련 메타데이터 + 라벨 목록
     path: Path
     width: int
     height: int

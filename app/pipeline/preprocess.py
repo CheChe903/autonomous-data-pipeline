@@ -10,6 +10,7 @@ from app.pipeline.classifier import infer_road_type_from_path, infer_time_of_day
 
 
 def compute_blur_score(image: np.ndarray) -> float:
+    # 라플라시안 분산으로 선명도 측정(낮을수록 흐림)
     return float(cv2.Laplacian(image, cv2.CV_64F).var())
 
 
@@ -21,7 +22,8 @@ def preprocess_image(
     jpeg_quality: int = 90,
 ) -> tuple[Path, dict]:
     """
-    Resize + normalize image. Returns (output_path, metadata).
+    이미지 리사이즈·정규화 후 지정 포맷으로 저장.
+    반환: (저장 경로, 메타데이터 딕셔너리)
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     image = cv2.imread(str(input_path))
@@ -31,6 +33,7 @@ def preprocess_image(
     normalized = resized.astype(np.float32) / 255.0
     blur_score = compute_blur_score(resized)
 
+    # 포맷별 인코딩 파라미터 설정
     params = []
     if image_format.lower() == "jpeg":
         params = [int(cv2.IMWRITE_JPEG_QUALITY), int(jpeg_quality)]

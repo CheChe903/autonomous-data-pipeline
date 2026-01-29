@@ -17,6 +17,7 @@ def kitti_paths(root: Path) -> Tuple[Path, Path]:
     Returns (image_dir, label_dir) using common KITTI layout.
     Defaults to image_2/label_2 under root.
     """
+    # 일반적인 KITTI 학습셋 디렉터리 형태를 우선 사용
     image_dir = root / "training" / "image_2"
     label_dir = root / "training" / "label_2"
     if not image_dir.exists() or not label_dir.exists():
@@ -27,6 +28,7 @@ def kitti_paths(root: Path) -> Tuple[Path, Path]:
 
 
 def ingest_kitti(root: Path) -> List[ImageRecord]:
+    # KITTI 이미지+라벨을 읽어 전처리 후 저장하며 DTO 리스트를 반환
     image_dir, label_dir = kitti_paths(root)
     storage = get_storage()
     results: List[ImageRecord] = []
@@ -35,6 +37,7 @@ def ingest_kitti(root: Path) -> List[ImageRecord]:
         label_file = label_dir / f"{img_path.stem}.txt"
         annotations: List[BoundingBox] = []
         if label_file.exists():
+            # 한 이미지에 대한 라벨 파일을 파싱
             annotations = parse_kitti_label_file(label_file)
 
         # read metadata
@@ -44,6 +47,7 @@ def ingest_kitti(root: Path) -> List[ImageRecord]:
             continue
         height, width = img.shape[:2]
 
+        # 전처리 및 품질 메타 생성
         processed_path, meta = preprocess_image(
             input_path=img_path,
             output_path=Path(settings.processed_root) / "kitti" / img_path.name,
@@ -52,6 +56,7 @@ def ingest_kitti(root: Path) -> List[ImageRecord]:
             jpeg_quality=settings.jpeg_quality,
         )
 
+        # 원본/전처리 결과 저장 (현재 기본은 로컬)
         stored_original = storage.save(img_path, f"raw/kitti/{img_path.name}")
         stored_processed = storage.save(processed_path, f"processed/kitti/{processed_path.name}")
 

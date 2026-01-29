@@ -14,6 +14,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    # KITTI 루트에서 이미지+라벨을 읽어 전처리 및 저장 실행
     records = ingest_kitti(Path(args.root))
     print(f"Ingested {len(records)} images (processed root: {settings.processed_root})")
 
