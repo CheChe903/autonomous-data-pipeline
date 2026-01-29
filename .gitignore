@@ -3,10 +3,7 @@ env
 venv
 __pycache__/
 *.py[cod]
-*.egg-info/
+.DS_Store
+data/
 .pytest_cache/
 .mypy_cache/
-.DS_Store
-data/raw/
-data/processed/
-.env

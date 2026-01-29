@@ -1,17 +1,27 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Iterable, Tuple
 
 import cv2
 import numpy as np
 
+from app.pipeline.classifier import infer_road_type_from_path, infer_time_of_day
+
+
+def compute_blur_score(image: np.ndarray) -> float:
+    return float(cv2.Laplacian(image, cv2.CV_64F).var())
+
 
 def preprocess_image(
     input_path: Path,
     output_path: Path,
     size: Tuple[int, int] = (640, 640),
-) -> Path:
+    image_format: str = "jpeg",
+    jpeg_quality: int = 90,
+) -> tuple[Path, dict]:
     """
-    Resize and normalize image; output is written to output_path.
+    Resize + normalize image. Returns (output_path, metadata).
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
     image = cv2.imread(str(input_path))
@@ -19,12 +29,41 @@ def preprocess_image(
         raise ValueError(f"Failed to read image: {input_path}")
     resized = cv2.resize(image, size)
     normalized = resized.astype(np.float32) / 255.0
-    # Store normalized image scaled back to 0-255 for visualization/storage
-    cv2.imwrite(str(output_path), (normalized * 255).astype(np.uint8))
-    return output_path
+    blur_score = compute_blur_score(resized)
+
+    params = []
+    if image_format.lower() == "jpeg":
+        params = [int(cv2.IMWRITE_JPEG_QUALITY), int(jpeg_quality)]
+        ext = ".jpg"
+    else:
+        ext = ".png"
+
+    target_path = output_path.with_suffix(ext)
+    cv2.imwrite(str(target_path), (normalized * 255).astype(np.uint8), params)
+
+    metadata = {
+        "width": resized.shape[1],
+        "height": resized.shape[0],
+        "blur_score": blur_score,
+        "time_of_day": infer_time_of_day(None),
+        "road_type": infer_road_type_from_path(input_path),
+    }
+    return target_path, metadata
 
 
-def batch_preprocess(inputs: Iterable[Path], output_root: Path, size: Tuple[int, int] = (640, 640)) -> Iterable[Path]:
+def batch_preprocess(
+    inputs: Iterable[Path],
+    output_root: Path,
+    size: Tuple[int, int],
+    image_format: str,
+    jpeg_quality: int,
+) -> Iterable[tuple[Path, dict]]:
     for path in inputs:
-        rel = path.relative_to(path.parents[1]) if len(path.parents) > 1 else path.name
-        yield preprocess_image(path, output_root / rel, size=size)
+        relative = path.name
+        yield preprocess_image(
+            input_path=path,
+            output_path=output_root / relative,
+            size=size,
+            image_format=image_format,
+            jpeg_quality=jpeg_quality,
+        )
