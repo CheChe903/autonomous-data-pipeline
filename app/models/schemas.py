@@ -2,9 +2,12 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from pydantic import ConfigDict
 
 
 class DetectionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int | None = None
     label: str
     confidence: float | None = None
@@ -14,11 +17,10 @@ class DetectionOut(BaseModel):
     y_max: float
     attributes: str | None = None
 
-    class Config:
-        orm_mode = True
-
 
 class ImageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int | None = None
     original_path: str
     processed_path: str
@@ -31,9 +33,6 @@ class ImageOut(BaseModel):
     road_type: Optional[str] = None
     quality_score: Optional[float] = None
     detections: List[DetectionOut] = Field(default_factory=list)
-
-    class Config:
-        orm_mode = True
 
 
 class UploadResponse(BaseModel):

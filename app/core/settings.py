@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     postgres_host: str = Field("localhost", alias="POSTGRES_HOST")
     postgres_port: int = Field(5432, alias="POSTGRES_PORT")
     postgres_db: str = Field("adp", alias="POSTGRES_DB")
+    database_url_override: str | None = Field(None, alias="DATABASE_URL")
 
     # storage
     storage_mode: str = Field("local", alias="STORAGE_MODE")  # local|minio
@@ -37,6 +38,8 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
+        if self.database_url_override:
+            return self.database_url_override
         return (
             f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
