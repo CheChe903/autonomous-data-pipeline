@@ -1,0 +1,14 @@
+.git
+.gitmodules
+.gitignore
+__pycache__
+*.pyc
+.venv
+env
+venv
+data/raw
+data/processed
+.mypy_cache
+.pytest_cache
+.DS_Store
+submodules
