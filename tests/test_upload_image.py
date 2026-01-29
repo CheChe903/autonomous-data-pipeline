@@ -95,7 +95,7 @@ def test_upload_missing_meta_field(tmp_path: Path, monkeypatch):
             data={"metadata": json.dumps(meta)},
         )
     assert resp.status_code == 400
-    assert "Missing metadata" in resp.text
+    assert "Metadata validation failed" in resp.text
 
 
 def test_upload_unsupported_ext(tmp_path: Path, monkeypatch):
