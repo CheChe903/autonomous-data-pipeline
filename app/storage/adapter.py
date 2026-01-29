@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import Protocol
 
-from app.core.config import settings
+from app.core.settings import settings
 from app.storage.minio_client import MinioClientWrapper
 
 

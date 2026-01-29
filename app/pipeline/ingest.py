@@ -5,7 +5,7 @@ from typing import Iterable, List, Tuple
 
 import cv2
 
-from app.core.config import settings
+from app.core.settings import settings
 from app.models.dto import BoundingBox, ImageRecord
 from app.parsers.kitti import iter_kitti_images, parse_kitti_label_file
 from app.pipeline.preprocess import preprocess_image

@@ -24,11 +24,11 @@
    - 저품질(블러, 가림 등) 자동 필터링  
 
 3) FastAPI 백엔드  
-   - `POST /upload` : 새 주행 영상 업로드  
-   - `GET /images` : 날짜/객체 타입/신뢰도 필터 조회  
-   - `GET /images/{id}` : 특정 이미지 상세  
-   - `GET /download/dataset` : 학습용 데이터셋 생성·다운로드  
-   - `GET /stats` : 객체별 분포·품질 지표  
+   - `POST /upload` : 새 주행 영상 업로드(옵션 라벨 파일) → 전처리 후 저장·DB 기록  
+   - `GET /images` : 라벨/품질(블러) 필터 + 페이징 조회  
+   - `GET /images/{id}` : 특정 이미지 메타/라벨 상세  
+   - `GET /download/dataset` : 조건 기반 서브셋 ZIP 다운로드(로컬 스토리지 지원)  
+   - `GET /stats` : 객체별 분포, 블러 통계  
 
 4) 데이터베이스 스키마  
    - `images`: 경로, 크기, 촬영시간, 품질점수 등 메타데이터  
