@@ -6,6 +6,7 @@ from app.core.settings import settings
 
 
 def create_app() -> FastAPI:
+    # FastAPI 앱 생성 및 라우터 구성
     app = FastAPI(title="Data Backend", version="0.1.0")
     app.add_middleware(
         CORSMiddleware,

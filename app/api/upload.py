@@ -45,7 +45,7 @@ async def upload(
         content = await file.read()
         tmp_path.write_bytes(content)
 
-        # 3) 기본 검증
+        # 3) 기본 검증 (크기/확장자)
         try:
             check_size(tmp_path, settings.max_file_size_mb)
             media_type = detect_media_type(tmp_path, settings.allowed_image_exts, settings.allowed_video_exts)
@@ -58,7 +58,7 @@ async def upload(
         file_id = uuid4().hex
         suffix = tmp_path.suffix.lower()
 
-        # 5) 전처리/메타 추출
+        # 5) 전처리/메타 추출 (이미지는 리사이즈·블러, 동영상은 메타만)
         computed = {}
         if media_type == "image":
             processed_path = storage.save(
@@ -79,6 +79,7 @@ async def upload(
         stored_path = storage.save(tmp_path, subdir="raw", suffix=suffix)
         file_hash = sha256_file(tmp_path)
 
+    # 6) 응답/저장용 레코드 구성
     record = {
         "id": file_id,
         "original_filename": file.filename,
@@ -91,7 +92,7 @@ async def upload(
         "computed": computed,
     }
 
-    # 6) 메타 JSON 저장
+    # 7) 메타 JSON 저장
     meta_dir = Path(settings.meta_path)
     meta_dir.mkdir(parents=True, exist_ok=True)
     (meta_dir / f"{file_id}.json").write_text(json.dumps(record, ensure_ascii=False, indent=2))
